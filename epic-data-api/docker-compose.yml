@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: epic_data_app
+    restart: always
+    ports:
+      - "8005:8000"
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-key-for-development-only
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - THEME_PARK_API_BASE_URL=https://api.themeparks.wiki/v1
+      - THEME_PARK_ENTITY_ID=12dbb85b-265f-44e6-bccf-f1faa17211fc
+      - DATABASE_URL=postgresql://epic_user:epic_password@db:5432/epic_data
+      - USE_POSTGRES=True
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  db:
+    image: postgres:15
+    container_name: epic_data_db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=epic_user
+      - POSTGRES_PASSWORD=epic_password
+      - POSTGRES_DB=epic_data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U epic_user -d epic_data"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres_data: 

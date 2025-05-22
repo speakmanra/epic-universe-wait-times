@@ -1,0 +1,14 @@
+#! /bin/bash
+set -e
+
+ECR_REPO="161811963073.dkr.ecr.us-east-2.amazonaws.com/epic-data-app"
+
+# Build and load the image
+docker buildx build --platform=linux/amd64 -t $ECR_REPO:latest --load .
+
+# Login to ECR
+TOKEN=$(aws ecr get-login-password --region us-east-2)
+echo $TOKEN | docker login -u AWS --password-stdin $ECR_REPO
+
+# Push the image
+docker push $ECR_REPO:latest

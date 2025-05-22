@@ -1,0 +1,5 @@
+aws_region         = "us-east-2"
+ecr_repository_name = "epic-data-app"
+django_secret_key  = "your-secure-secret-key-change-this"
+theme_park_api_url = "https://api.themeparks.wiki/v1"
+theme_park_entity_id = "12dbb85b-265f-44e6-bccf-f1faa17211fc" 
